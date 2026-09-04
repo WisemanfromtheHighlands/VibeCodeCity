@@ -7,7 +7,9 @@ import {
   type CityMode,
   type LabelState,
   type CitySceneApi,
+  type CityQuality,
 } from "./cityScene";
+import { resolveCityQuality } from "./cityTypes";
 
 type CityGlimpseProps = {
   variant?: "full" | "compact";
@@ -22,11 +24,15 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
   const [labels, setLabels] = useState<LabelState[]>([]);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [quality, setQuality] = useState<CityQuality>("high");
   const apiRef = useRef<CitySceneApi | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(mq.matches);
+    const sync = () => {
+      setReducedMotion(mq.matches);
+      setQuality(resolveCityQuality());
+    };
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
@@ -38,10 +44,12 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
       setHint,
       setLocked,
       setLabels,
+      setQuality,
       onNavigate: (href) => router.push(href),
       getMount: () => mountRef.current,
     });
     apiRef.current = api;
+    setQuality(api.getQuality());
     return () => {
       dispose();
       apiRef.current = null;
@@ -52,6 +60,13 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
     if (reducedMotion) apiRef.current?.enterOrbit();
     else apiRef.current?.enterFps();
   }, [reducedMotion]);
+
+  const toggleQuality = useCallback(() => {
+    if (reducedMotion) return;
+    const next: CityQuality = quality === "high" ? "low" : "high";
+    apiRef.current?.setQuality(next);
+    setQuality(next);
+  }, [quality, reducedMotion]);
 
   const heightClass =
     variant === "compact" ? "min-h-[420px] h-[55vh]" : "min-h-[70vh] h-[calc(100dvh-8rem)]";
@@ -87,7 +102,7 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
         </p>
       </div>
 
-      <div className="absolute right-3 top-3 z-[3] flex gap-2">
+      <div className="absolute right-3 top-3 z-[3] flex flex-wrap justify-end gap-2">
         <button
           type="button"
           onClick={() => apiRef.current?.enterFps()}
@@ -109,6 +124,23 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
           }`}
         >
           Orbit
+        </button>
+        <button
+          type="button"
+          onClick={toggleQuality}
+          disabled={reducedMotion}
+          title={
+            reducedMotion
+              ? "Quality locked low while prefers-reduced-motion is on"
+              : "Toggle bloom and sky detail (High / Low)"
+          }
+          className={`rounded-full px-3 py-1.5 text-xs font-medium backdrop-blur-md transition ${
+            quality === "high"
+              ? "bg-solar-gold/20 text-solar-gold ring-1 ring-solar-gold/40"
+              : "bg-void/60 text-white/70 ring-1 ring-white/10 hover:text-white"
+          } disabled:cursor-not-allowed disabled:opacity-50`}
+        >
+          {quality === "high" ? "HQ" : "LQ"}
         </button>
       </div>
 
