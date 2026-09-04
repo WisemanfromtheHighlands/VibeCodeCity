@@ -2,7 +2,6 @@ import * as THREE from "three";
 import type { CityMode, CityQuality, CitySceneApi, CitySceneHooks, LabelState, PortalDef } from "./cityTypes";
 import { CITY_QUALITY_KEY, resolveCityQuality } from "./cityTypes";
 import { buildCityWorld } from "./cityWorld";
-import { createPostStack, disposePostStack, resizePostStack, type PostStack } from "./cityPost";
 
 export type { CityMode, LabelState, CitySceneApi, CityQuality } from "./cityTypes";
 
@@ -46,13 +45,6 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
   let orbitR = prefersReduce ? 14 : 12;
   const orbitTarget = new THREE.Vector3(0, 2.2, -6);
 
-  let post: PostStack | null = null;
-
-  const buildPost = () => {
-    disposePostStack(post);
-    post = createPostStack(renderer, scene, camera, quality);
-  };
-  buildPost();
   hooks.setQuality?.(quality);
 
   const clampPlayer = () => {
@@ -110,8 +102,6 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
 
   const tearDownWorld = () => {
     if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    disposePostStack(post);
-    post = null;
     scene.traverse((obj) => {
       if (obj instanceof THREE.Mesh) {
         obj.geometry?.dispose();
@@ -144,7 +134,6 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
     camera.quaternion.copy(camQuat);
     euler.setFromQuaternion(camera.quaternion);
     bindCanvasEvents();
-    buildPost();
     if (prevMode === "orbit") applyOrbit();
     else if (prevMode === "fps") setModeLocal("fps");
     else setModeLocal(prevMode);
@@ -337,12 +326,7 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
       hooks.setLabels(nextLabels);
     }
 
-    if (post) {
-      post.vignette.uniforms.uTime.value = t;
-      post.composer.render();
-    } else {
-      renderer.render(scene, camera);
-    }
+    renderer.render(scene, camera);
   };
   animate();
 
@@ -354,7 +338,6 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
     camera.aspect = w / Math.max(h, 1);
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
-    resizePostStack(post, w, h);
   };
   const ro = new ResizeObserver(onResize);
   ro.observe(el);
