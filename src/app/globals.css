@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #07060B;
+  --magenta: #FF2A6D;
+  --cyan: #00F0FF;
+  --violet: #B14EFF;
+  --solar-gold: #F5C542;
+  --chlorophyll: #3DDC97;
+  --surface-1: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 160ms;
+  --duration-medium: 320ms;
+  --duration-slow: 560ms;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--void);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: rgba(255, 42, 109, 0.35);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.surface {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+}
+
+.surface-2 {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.text-glow-magenta {
+  text-shadow: 0 0 24px rgba(255, 42, 109, 0.45);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 24px rgba(0, 240, 255, 0.4);
+}
+
+.grid-noise {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
