@@ -1,25 +1,82 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useCallback, useRef } from "react";
 import { useAudioUi } from "./MuteControl";
+import { LivingGeometry } from "./LivingGeometry";
+
+const ORGANIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fade = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 22 },
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: 0.08 * i, duration: 0.56, ease: [0.22, 1, 0.36, 1] },
+    transition: {
+      delay: 0.12 + i * 0.11,
+      duration: 0.62,
+      ease: ORGANIC,
+    },
   }),
 };
 
 export function Hero() {
   const { reducedMotion, unlock } = useAudioUi();
+  const stageRef = useRef<HTMLElement>(null);
+
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 60, damping: 22, mass: 0.6 });
+  const sy = useSpring(my, { stiffness: 60, damping: 22, mass: 0.6 });
+  const parallaxX = useTransform(sx, (v) => v * 10);
+  const parallaxY = useTransform(sy, (v) => v * 8);
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (reducedMotion) return;
+      const el = stageRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+      mx.set(nx);
+      my.set(ny);
+    },
+    [reducedMotion, mx, my],
+  );
+
+  const onPointerLeave = useCallback(() => {
+    mx.set(0);
+    my.set(0);
+  }, [mx, my]);
 
   return (
-    <section className="relative overflow-hidden bg-rave-glow">
-      <div className="pointer-events-none absolute inset-0 grid-noise opacity-60" aria-hidden />
-      <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-4 py-20 sm:px-6 lg:py-28">
+    <section
+      ref={stageRef}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      className="relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-void"
+    >
+      {/* Living field */}
+      <LivingGeometry className="z-0" />
+
+      {/* Atmospheric orbs */}
+      <div className="hero-orb hero-orb-magenta" aria-hidden />
+      <div className="hero-orb hero-orb-cyan" aria-hidden />
+      <div className="hero-orb hero-orb-solar" aria-hidden />
+      <div className="hero-orb hero-orb-chloro" aria-hidden />
+
+      {/* Soft vignette + grain */}
+      <div className="hero-vignette z-[1]" aria-hidden />
+      <div className="hero-grain z-[1] opacity-40" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 z-[1] grid-noise opacity-35" aria-hidden />
+
+      {/* Copy layer */}
+      <motion.div
+        className="relative z-[2] mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-24 sm:px-6 lg:py-28"
+        style={reducedMotion ? undefined : { x: parallaxX, y: parallaxY }}
+      >
         <motion.p
           className="mb-4 font-display text-xs font-semibold tracking-[0.28em] text-magenta text-glow-magenta"
           custom={0}
@@ -81,7 +138,18 @@ export function Hero() {
         >
           Hybrid nocturnal craft · solar accents · no waitlist theater
         </motion.p>
-      </div>
+      </motion.div>
+
+      {/* Scroll hint into pathways */}
+      <motion.div
+        className="relative z-[2] flex justify-center pb-8 pt-2"
+        initial={reducedMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 0.45 }}
+        transition={{ delay: 1.1, duration: 0.7, ease: ORGANIC }}
+        aria-hidden
+      >
+        <div className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent" />
+      </motion.div>
     </section>
   );
 }
