@@ -11,7 +11,7 @@ const visitSteps = [
   {
     n: "01",
     title: "Orient",
-    body: "You're here. Read this page once. You don't need to memorize anything — just get the shape of the place.",
+    body: "You're here. Read this page once. You don’t need to memorize anything — just get the shape of the place.",
   },
   {
     n: "02",
@@ -20,8 +20,8 @@ const visitSteps = [
   },
   {
     n: "03",
-    title: "Sound (optional)",
-    body: "Unlock soft ambient once; it can stay with you sitewide while you work. Mute anytime. Atmosphere, not therapy.",
+    title: "Soundtrack (optional)",
+    body: "Optional focus beds — start them only on /sound when you want. Silent by default. Research ongoing; no medical claims.",
   },
   {
     n: "04",
@@ -73,20 +73,20 @@ export default function OrientationPage() {
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-white/75">
           VibeCodeCity is a living academy — a dojo for creative AI literacy. Not a product funnel.
-          Not a waitlist. Not a course that sells you hype. It's a place to walk in curious, leave with
+          Not a waitlist. Not a course that sells you hype. It’s a place to walk in curious, leave with
           clearer mental models, and practice wielding AI as a tool with presence and taste.
         </p>
         <p className="mt-4 text-base leading-relaxed text-white/60">
           Built for beginners who know nothing yet — and welcoming to advanced minds who want depth
-          without jargon walls. If your grandma can follow the map, you're doing it right. If you've
+          without jargon walls. If your grandma can follow the map, you’re doing it right. If you’ve
           already shipped with models for years, the Field and Practice rooms still have texture.
         </p>
 
         <section className="mt-14">
-          <h2 className="font-display text-2xl text-white">Who it's for</h2>
+          <h2 className="font-display text-2xl text-white">Who it’s for</h2>
           <ul className="mt-4 space-y-3 text-sm leading-relaxed text-white/65">
             <li className="surface rounded-2xl px-5 py-4">
-              <span className="font-medium text-cyan">Curious from zero.</span> You've heard the noise.
+              <span className="font-medium text-cyan">Curious from zero.</span> You’ve heard the noise.
               You want a simple picture of what this stuff actually is — and a path to get good.
             </li>
             <li className="surface rounded-2xl px-5 py-4">
@@ -121,7 +121,7 @@ export default function OrientationPage() {
         <section className="mt-14">
           <h2 className="font-display text-2xl text-white">From nothing to fluency</h2>
           <p className="mt-3 text-sm leading-relaxed text-white/60">
-            You don't need a giant curriculum dump. You need a ladder of plain ideas — the kind you
+            You don’t need a giant curriculum dump. You need a ladder of plain ideas — the kind you
             could explain at the kitchen table — with optional deeper asides if you want them.
           </p>
           <div className="mt-6 space-y-5">
@@ -146,8 +146,8 @@ export default function OrientationPage() {
         <section className="mt-14 surface rounded-3xl p-6 sm:p-8">
           <h2 className="font-display text-2xl text-white">Your next move</h2>
           <p className="mt-3 text-sm leading-relaxed text-white/65">
-            Pick one. Don't collect all the doors. Start a short practice module, or open the Field and
-            learn by gesture. Sound can unlock in the corner whenever you're ready — it follows you.
+            Pick one. Don’t collect all the doors. Start a short practice module, or open the Field and
+            learn by gesture. Sound can unlock in the corner whenever you want it — soundtrack stays optional.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
