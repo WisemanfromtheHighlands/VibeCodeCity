@@ -1,22 +1,37 @@
 import * as THREE from "three";
-import type { CityMode, CitySceneApi, CitySceneHooks, LabelState, PortalDef } from "./cityTypes";
+import type { CityMode, CityQuality, CitySceneApi, CitySceneHooks, LabelState, PortalDef } from "./cityTypes";
+import { CITY_QUALITY_KEY, resolveCityQuality } from "./cityTypes";
 import { buildCityWorld } from "./cityWorld";
+import { createPostStack, disposePostStack, resizePostStack, type PostStack } from "./cityPost";
 
-export type { CityMode, LabelState, CitySceneApi } from "./cityTypes";
+export type { CityMode, LabelState, CitySceneApi, CityQuality } from "./cityTypes";
 
 export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dispose: () => void } {
   const el = hooks.getMount();
   if (!el) {
-    return { api: { enterFps: () => {}, enterOrbit: () => {}, navigateHot: () => {} }, dispose: () => {} };
+    return {
+      api: {
+        enterFps: () => {},
+        enterOrbit: () => {},
+        navigateHot: () => {},
+        setQuality: () => {},
+        getQuality: () => "high",
+      },
+      dispose: () => {},
+    };
   }
 
   const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let quality: CityQuality = resolveCityQuality();
   let disposed = false;
   let raf = 0;
+  let pageVisible = document.visibilityState !== "hidden";
   let modeLocal: CityMode = prefersReduce ? "orbit" : "idle";
   let pointerLocked = false;
 
-  const { scene, camera, renderer, magenta, cyan, gold, portalMeshes, labelAnchors } = buildCityWorld(el);
+  let world = buildCityWorld(el, quality);
+  let { scene, camera, renderer, magenta, cyan, gold, portalMeshes, labelAnchors, buildingMaterials, skyUpdate } =
+    world;
 
   const keys: Record<string, boolean> = {};
   const euler = new THREE.Euler(0, 0, 0, "YXZ");
@@ -30,6 +45,15 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
   let orbitEl = 0.28;
   let orbitR = prefersReduce ? 14 : 12;
   const orbitTarget = new THREE.Vector3(0, 2.2, -6);
+
+  let post: PostStack | null = null;
+
+  const buildPost = () => {
+    disposePostStack(post);
+    post = createPostStack(renderer, scene, camera, quality);
+  };
+  buildPost();
+  hooks.setQuality?.(quality);
 
   const clampPlayer = () => {
     camera.position.x = THREE.MathUtils.clamp(camera.position.x, -16, 16);
@@ -84,7 +108,51 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
     if (hotPortal) hooks.onNavigate(hotPortal.href);
   };
 
-  const api: CitySceneApi = { enterFps, enterOrbit, navigateHot };
+  const tearDownWorld = () => {
+    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+    disposePostStack(post);
+    post = null;
+    scene.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.geometry?.dispose();
+        const m = obj.material;
+        if (Array.isArray(m)) m.forEach((x) => x.dispose());
+        else m?.dispose();
+      }
+    });
+    renderer.dispose();
+    if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
+  };
+
+  const setQuality = (q: CityQuality) => {
+    if (q === quality) return;
+    const prevMode = modeLocal;
+    const camPos = camera.position.clone();
+    const camQuat = camera.quaternion.clone();
+    quality = q;
+    try {
+      localStorage.setItem(CITY_QUALITY_KEY, q);
+    } catch {
+      /* ignore */
+    }
+    hooks.setQuality?.(q);
+    tearDownWorld();
+    world = buildCityWorld(el, quality);
+    ({ scene, camera, renderer, magenta, cyan, gold, portalMeshes, labelAnchors, buildingMaterials, skyUpdate } =
+      world);
+    camera.position.copy(camPos);
+    camera.quaternion.copy(camQuat);
+    euler.setFromQuaternion(camera.quaternion);
+    bindCanvasEvents();
+    buildPost();
+    if (prevMode === "orbit") applyOrbit();
+    else if (prevMode === "fps") setModeLocal("fps");
+    else setModeLocal(prevMode);
+  };
+
+  const getQuality = () => quality;
+
+  const api: CitySceneApi = { enterFps, enterOrbit, navigateHot, setQuality, getQuality };
 
   const onLockChange = () => {
     pointerLocked = document.pointerLockElement === renderer.domElement;
@@ -149,15 +217,36 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
     if (modeLocal === "fps" && hotPortal) hooks.onNavigate(hotPortal.href);
   };
 
+  const bindCanvasEvents = () => {
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+    renderer.domElement.addEventListener("pointerup", onPointerUp);
+    renderer.domElement.addEventListener("wheel", onWheel, { passive: false });
+    renderer.domElement.addEventListener("click", onClick);
+  };
+
+  const unbindCanvasEvents = () => {
+    renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+    renderer.domElement.removeEventListener("pointermove", onPointerMove);
+    renderer.domElement.removeEventListener("pointerup", onPointerUp);
+    renderer.domElement.removeEventListener("wheel", onWheel);
+    renderer.domElement.removeEventListener("click", onClick);
+  };
+
   document.addEventListener("pointerlockchange", onLockChange);
   document.addEventListener("mousemove", onMouseMove);
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
-  renderer.domElement.addEventListener("pointerdown", onPointerDown);
-  renderer.domElement.addEventListener("pointermove", onPointerMove);
-  renderer.domElement.addEventListener("pointerup", onPointerUp);
-  renderer.domElement.addEventListener("wheel", onWheel, { passive: false });
-  renderer.domElement.addEventListener("click", onClick);
+  bindCanvasEvents();
+
+  const onVisibility = () => {
+    pageVisible = document.visibilityState !== "hidden";
+    if (pageVisible && !disposed && !raf) {
+      clock.start();
+      animate();
+    }
+  };
+  document.addEventListener("visibilitychange", onVisibility);
 
   if (prefersReduce) {
     setModeLocal("orbit");
@@ -170,9 +259,18 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
 
   const animate = () => {
     if (disposed) return;
+    if (!pageVisible) {
+      raf = 0;
+      return;
+    }
     raf = requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
+
+    skyUpdate(t);
+    for (const mat of buildingMaterials) {
+      mat.uniforms.uTime.value = t;
+    }
 
     magenta.intensity = 24 + Math.sin(t * 0.7) * 4;
     cyan.intensity = 20 + Math.sin(t * 0.9 + 1) * 4;
@@ -197,7 +295,7 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
       camera.position.addScaledVector(velocity, dt);
       clampPlayer();
     } else if (modeLocal === "orbit") {
-      orbitAz += dt * (prefersReduce ? 0.025 : 0.08);
+      orbitAz += dt * (prefersReduce || quality === "low" ? 0.025 : 0.08);
       applyOrbit();
     } else if (!prefersReduce) {
       camera.position.x = Math.sin(t * 0.15) * 0.35;
@@ -220,11 +318,11 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
       labelTick = 0;
       const nextLabels: LabelState[] = [];
       const rect = renderer.domElement.getBoundingClientRect();
-      const world = new THREE.Vector3();
+      const worldPos = new THREE.Vector3();
       for (const { portal, obj } of labelAnchors) {
-        obj.getWorldPosition(world);
-        const dist = camera.position.distanceTo(world);
-        tmp.copy(world).project(camera);
+        obj.getWorldPosition(worldPos);
+        const dist = camera.position.distanceTo(worldPos);
+        tmp.copy(worldPos).project(camera);
         const visible = tmp.z < 1;
         nextLabels.push({
           id: portal.id,
@@ -239,7 +337,12 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
       hooks.setLabels(nextLabels);
     }
 
-    renderer.render(scene, camera);
+    if (post) {
+      post.vignette.uniforms.uTime.value = t;
+      post.composer.render();
+    } else {
+      renderer.render(scene, camera);
+    }
   };
   animate();
 
@@ -251,6 +354,7 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
     camera.aspect = w / Math.max(h, 1);
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    resizePostStack(post, w, h);
   };
   const ro = new ResizeObserver(onResize);
   ro.observe(el);
@@ -259,28 +363,16 @@ export function createCityScene(hooks: CitySceneHooks): { api: CitySceneApi; dis
   const dispose = () => {
     disposed = true;
     cancelAnimationFrame(raf);
+    raf = 0;
     ro.disconnect();
     document.removeEventListener("pointerlockchange", onLockChange);
     document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("visibilitychange", onVisibility);
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("resize", onResize);
-    renderer.domElement.removeEventListener("pointerdown", onPointerDown);
-    renderer.domElement.removeEventListener("pointermove", onPointerMove);
-    renderer.domElement.removeEventListener("pointerup", onPointerUp);
-    renderer.domElement.removeEventListener("wheel", onWheel);
-    renderer.domElement.removeEventListener("click", onClick);
-    if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    renderer.dispose();
-    scene.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) {
-        obj.geometry?.dispose();
-        const m = obj.material;
-        if (Array.isArray(m)) m.forEach((x) => x.dispose());
-        else m?.dispose();
-      }
-    });
-    if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
+    unbindCanvasEvents();
+    tearDownWorld();
   };
 
   return { api, dispose };
