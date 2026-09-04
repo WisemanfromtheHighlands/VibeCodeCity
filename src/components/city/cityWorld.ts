@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import type { PortalDef } from "./cityTypes";
+import type { CityQuality, PortalDef } from "./cityTypes";
 import { PORTALS, FILLER } from "./cityTypes";
+import { createBuildingMaterial, createSkyDome, CITY_PALETTE } from "./cityShaders";
 
 export type CityWorld = {
   scene: THREE.Scene;
@@ -11,31 +12,42 @@ export type CityWorld = {
   gold: THREE.PointLight;
   portalMeshes: THREE.Mesh[];
   labelAnchors: { portal: PortalDef; obj: THREE.Object3D }[];
+  buildingMaterials: THREE.ShaderMaterial[];
+  skyUpdate: (t: number) => void;
+  quality: CityQuality;
 };
 
-export function buildCityWorld(el: HTMLElement): CityWorld {
+export function buildCityWorld(el: HTMLElement, quality: CityQuality = "high"): CityWorld {
+  const cheap = quality === "low";
   const w0 = el.clientWidth || 800;
   const h0 = el.clientHeight || 500;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x07060b);
-  scene.fog = new THREE.FogExp2(0x07060b, 0.028);
+  scene.background = null;
+  scene.fog = new THREE.FogExp2(CITY_PALETTE.void.getHex(), cheap ? 0.032 : 0.024);
 
-  const camera = new THREE.PerspectiveCamera(62, w0 / h0, 0.1, 120);
+  const camera = new THREE.PerspectiveCamera(62, w0 / h0, 0.1, 140);
   camera.position.set(0, 1.7, 8);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  const renderer = new THREE.WebGLRenderer({
+    antialias: !cheap,
+    alpha: false,
+    powerPreference: "high-performance",
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cheap ? 1.25 : 1.75));
   renderer.setSize(w0, h0, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = cheap ? 1.05 : 1.12;
   el.appendChild(renderer.domElement);
   renderer.domElement.style.display = "block";
   renderer.domElement.style.width = "100%";
   renderer.domElement.style.height = "100%";
   renderer.domElement.style.touchAction = "none";
   renderer.domElement.tabIndex = 0;
+
+  const sky = createSkyDome(cheap);
+  scene.add(sky.mesh);
 
   scene.add(new THREE.AmbientLight(0x1a1528, 0.55));
   scene.add(new THREE.HemisphereLight(0x3a2060, 0x0a1810, 0.55));
@@ -54,7 +66,7 @@ export function buildCityWorld(el: HTMLElement): CityWorld {
   scene.add(chloro);
 
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(80, 80, 40, 40),
+    new THREE.PlaneGeometry(80, 80, cheap ? 1 : 40, cheap ? 1 : 40),
     new THREE.MeshStandardMaterial({
       color: 0x0c0a12,
       metalness: 0.55,
@@ -67,7 +79,7 @@ export function buildCityWorld(el: HTMLElement): CityWorld {
   scene.add(ground);
 
   const ring = new THREE.Mesh(
-    new THREE.RingGeometry(4.2, 5.1, 64),
+    new THREE.RingGeometry(4.2, 5.1, cheap ? 32 : 64),
     new THREE.MeshStandardMaterial({
       color: 0x00f0ff,
       emissive: 0x00f0ff,
@@ -101,15 +113,9 @@ export function buildCityWorld(el: HTMLElement): CityWorld {
     scene.add(p);
   });
 
-  const haze = new THREE.Mesh(
-    new THREE.PlaneGeometry(90, 40),
-    new THREE.MeshBasicMaterial({ color: 0x1a0530, transparent: true, opacity: 0.35, depthWrite: false }),
-  );
-  haze.position.set(0, 12, -28);
-  scene.add(haze);
-
   const portalMeshes: THREE.Mesh[] = [];
   const labelAnchors: { portal: PortalDef; obj: THREE.Object3D }[] = [];
+  const buildingMaterials: THREE.ShaderMaterial[] = [];
 
   const makeBuilding = (
     position: [number, number, number],
@@ -119,42 +125,35 @@ export function buildCityWorld(el: HTMLElement): CityWorld {
     portal?: PortalDef,
   ) => {
     const group = new THREE.Group();
-    const body = new THREE.Mesh(
-      new THREE.BoxGeometry(size[0], size[1], size[2]),
-      new THREE.MeshStandardMaterial({
-        color: baseColor,
-        metalness: 0.35,
-        roughness: 0.45,
-        emissive: accent,
-        emissiveIntensity: 0.12,
-      }),
-    );
+    const bodyMat = createBuildingMaterial(baseColor, accent);
+    buildingMaterials.push(bodyMat);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), bodyMat);
     body.position.y = size[1] / 2;
     group.add(body);
 
-    const bands = Math.max(2, Math.floor(size[1] / 1.4));
-    const bandH = Math.max(0.18, size[1] * 0.06);
-    for (let i = 0; i < bands; i++) {
-      const band = new THREE.Mesh(
-        new THREE.BoxGeometry(size[0] * 0.92, bandH, size[2] * 1.02),
-        new THREE.MeshStandardMaterial({
-          color: accent,
-          emissive: accent,
-          emissiveIntensity: 0.9 + (i % 2) * 0.35,
-          metalness: 0.7,
-          roughness: 0.2,
-        }),
-      );
-      band.position.y = 0.7 + i * (size[1] / bands);
-      group.add(band);
-    }
-
+    // Slim emissive roof edge — keeps silhouette readable without heavy geo
     const roof = new THREE.Mesh(
       new THREE.BoxGeometry(size[0] * 1.05, 0.12, size[2] * 1.05),
       new THREE.MeshStandardMaterial({ color: accent, emissive: accent, emissiveIntensity: 1.6 }),
     );
     roof.position.y = size[1] + 0.08;
     group.add(roof);
+
+    // Optional mid glow band (skip on low for fewer draw calls)
+    if (!cheap) {
+      const band = new THREE.Mesh(
+        new THREE.BoxGeometry(size[0] * 0.94, Math.max(0.14, size[1] * 0.05), size[2] * 1.02),
+        new THREE.MeshStandardMaterial({
+          color: accent,
+          emissive: accent,
+          emissiveIntensity: 1.1,
+          metalness: 0.7,
+          roughness: 0.2,
+        }),
+      );
+      band.position.y = size[1] * 0.55;
+      group.add(band);
+    }
 
     group.position.set(position[0], 0, position[2]);
     scene.add(group);
@@ -184,5 +183,17 @@ export function buildCityWorld(el: HTMLElement): CityWorld {
     scene.add(m);
   });
 
-  return { scene, camera, renderer, magenta, cyan, gold, portalMeshes, labelAnchors };
+  return {
+    scene,
+    camera,
+    renderer,
+    magenta,
+    cyan,
+    gold,
+    portalMeshes,
+    labelAnchors,
+    buildingMaterials,
+    skyUpdate: sky.update,
+    quality,
+  };
 }
