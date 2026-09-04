@@ -132,7 +132,7 @@ export function CityGlimpse({ variant = "full", className = "" }: CityGlimpsePro
           title={
             reducedMotion
               ? "Quality locked low while prefers-reduced-motion is on"
-              : "Toggle bloom and sky detail (High / Low)"
+              : "Toggle sharper sky and pixel ratio (High / Low)"
           }
           className={`rounded-full px-3 py-1.5 text-xs font-medium backdrop-blur-md transition ${
             quality === "high"
