@@ -26,6 +26,24 @@ export const FILLER: { position: [number, number, number]; size: [number, number
 
 export type CityMode = "idle" | "fps" | "orbit";
 
+/** Visual quality for City Glimpse — low skips bloom/grain and uses a cheaper sky */
+export type CityQuality = "high" | "low";
+
+export const CITY_QUALITY_KEY = "vcc-city-quality";
+
+export function resolveCityQuality(override?: CityQuality | null): CityQuality {
+  if (typeof window === "undefined") return "high";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "low";
+  if (override === "high" || override === "low") return override;
+  try {
+    const stored = localStorage.getItem(CITY_QUALITY_KEY);
+    if (stored === "high" || stored === "low") return stored;
+  } catch {
+    /* ignore */
+  }
+  return "high";
+}
+
 export type LabelState = {
   id: string;
   label: string;
@@ -40,6 +58,8 @@ export type CitySceneApi = {
   enterFps: () => void;
   enterOrbit: () => void;
   navigateHot: () => void;
+  setQuality: (q: CityQuality) => void;
+  getQuality: () => CityQuality;
 };
 
 export type CitySceneHooks = {
@@ -47,6 +67,7 @@ export type CitySceneHooks = {
   setHint: (h: string) => void;
   setLocked: (v: boolean) => void;
   setLabels: (labels: LabelState[]) => void;
+  setQuality?: (q: CityQuality) => void;
   onNavigate: (href: string) => void;
   getMount: () => HTMLElement | null;
 };
