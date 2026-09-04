@@ -7,7 +7,11 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+
+      <section
+        id="pathways"
+        className="relative mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 sm:pt-10"
+      >
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="font-display text-xs tracking-[0.24em] text-cyan">PATHWAYS</p>
