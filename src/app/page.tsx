@@ -29,7 +29,7 @@ export default function HomePage() {
       </section>
 
       <section className="border-y border-white/10 bg-white/[0.02]">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               title: "Orient",
@@ -37,9 +37,14 @@ export default function HomePage() {
               body: "New here? What this place is, how a visit works, and a plain path from zero to fluent.",
             },
             {
-              title: "Sound",
+              title: "City",
+              href: "/city",
+              body: "Step into a nocturnal district. Look around, walk the plaza, and enter academy portals.",
+            },
+            {
+              title: "Soundtrack",
               href: "/sound",
-              body: "Unlock once — soft ambient can follow you sitewide. Mute anytime. Atmosphere, not therapy.",
+              body: "Optional focus beds — opt in here only. Research ongoing. No medical claims. Silent by default.",
             },
             {
               title: "Tuning Field",
