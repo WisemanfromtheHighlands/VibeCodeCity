@@ -67,11 +67,79 @@ body {
   mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
 }
 
+/* —— Cinematic hero utilities (tokens untouched) —— */
+.hero-vignette {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, rgba(7, 6, 11, 0.55) 78%, rgba(7, 6, 11, 0.92) 100%),
+    linear-gradient(to bottom, rgba(7, 6, 11, 0.35) 0%, transparent 18%, transparent 72%, rgba(7, 6, 11, 0.75) 100%);
+}
+
+.hero-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+.hero-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
+  z-index: 0;
+}
+
+.hero-orb-magenta {
+  width: min(52vw, 520px);
+  height: min(52vw, 520px);
+  top: -8%;
+  left: -6%;
+  background: rgba(255, 42, 109, 0.22);
+}
+
+.hero-orb-cyan {
+  width: min(44vw, 440px);
+  height: min(44vw, 440px);
+  top: 12%;
+  right: -8%;
+  background: rgba(0, 240, 255, 0.14);
+}
+
+.hero-orb-solar {
+  width: min(28vw, 280px);
+  height: min(28vw, 280px);
+  bottom: 18%;
+  left: 18%;
+  background: rgba(245, 197, 66, 0.1);
+  opacity: 0.4;
+}
+
+.hero-orb-chloro {
+  width: min(36vw, 360px);
+  height: min(36vw, 360px);
+  bottom: -6%;
+  right: 12%;
+  background: rgba(61, 220, 151, 0.12);
+  opacity: 0.45;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .hero-orb {
+    opacity: 0.35;
+    filter: blur(64px);
   }
 }
