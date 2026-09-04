@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { CityQuality, PortalDef } from "./cityTypes";
 import { PORTALS, FILLER } from "./cityTypes";
-import { createBuildingMaterial, createSkyDome, CITY_PALETTE } from "./cityShaders";
+import { createBuildingMaterial, createSkyDome } from "./cityShaders";
 
 export type CityWorld = {
   scene: THREE.Scene;
@@ -24,7 +24,6 @@ export function buildCityWorld(el: HTMLElement, quality: CityQuality = "high"): 
 
   const scene = new THREE.Scene();
   scene.background = null;
-  scene.fog = new THREE.FogExp2(CITY_PALETTE.void.getHex(), cheap ? 0.032 : 0.024);
 
   const camera = new THREE.PerspectiveCamera(62, w0 / h0, 0.1, 140);
   camera.position.set(0, 1.7, 8);
