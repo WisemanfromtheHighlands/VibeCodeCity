@@ -3,6 +3,11 @@ export type ToneId = "drone" | "pulse" | "shimmer";
 let sharedCtx: AudioContext | null = null;
 let unlocked = false;
 
+/** Layout-level soft ambient — survives route changes until explicitly stopped. */
+let ambientHandles: ImmersionHandles | null = null;
+let ambientTone: ToneId = "drone";
+let ambientReducedMotion = false;
+
 export function getAudioContext(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!sharedCtx) {
@@ -114,4 +119,50 @@ export function startImmersion(opts: {
     },
     setTone: (tone: ToneId) => build(tone),
   };
+}
+
+/** Start or refresh the sitewide soft ambient bed (layout-level singleton). */
+export function ensureAmbient(opts: {
+  muted?: boolean;
+  tone?: ToneId;
+  reducedMotion?: boolean;
+}): ImmersionHandles | null {
+  if (opts.tone) ambientTone = opts.tone;
+  if (opts.reducedMotion !== undefined) ambientReducedMotion = opts.reducedMotion;
+
+  if (ambientHandles) {
+    if (opts.tone) ambientHandles.setTone(ambientTone);
+    if (opts.muted !== undefined) ambientHandles.setMuted(!!opts.muted);
+    return ambientHandles;
+  }
+
+  const h = startImmersion({
+    muted: opts.muted,
+    tone: ambientTone,
+    reducedMotion: ambientReducedMotion,
+  });
+  ambientHandles = h;
+  return h;
+}
+
+export function stopAmbient() {
+  ambientHandles?.stop();
+  ambientHandles = null;
+}
+
+export function setAmbientMuted(muted: boolean) {
+  ambientHandles?.setMuted(muted);
+}
+
+export function setAmbientTone(tone: ToneId) {
+  ambientTone = tone;
+  ambientHandles?.setTone(tone);
+}
+
+export function getAmbientTone(): ToneId {
+  return ambientTone;
+}
+
+export function isAmbientPlaying(): boolean {
+  return ambientHandles !== null;
 }

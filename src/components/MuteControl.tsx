@@ -1,22 +1,38 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { unlockAudio } from "@/lib/audio";
+import {
+  ensureAmbient,
+  setAmbientMuted,
+  setAmbientTone,
+  stopAmbient,
+  unlockAudio,
+  isAmbientPlaying,
+  getAmbientTone,
+  type ToneId,
+} from "@/lib/audio";
 
 type AudioUiState = {
   muted: boolean;
   unlocked: boolean;
   reducedMotion: boolean;
+  ambientPlaying: boolean;
+  tone: ToneId;
   setMuted: (v: boolean) => void;
+  setTone: (tone: ToneId) => void;
   unlock: () => Promise<boolean>;
+  startAmbient: () => boolean;
+  stopAmbientBed: () => void;
 };
 
 const AudioUiContext = createContext<AudioUiState | null>(null);
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
-  const [muted, setMuted] = useState(false);
+  const [muted, setMutedState] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [ambientPlaying, setAmbientPlaying] = useState(false);
+  const [tone, setToneState] = useState<ToneId>("drone");
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -26,15 +42,72 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  const unlock = useCallback(async () => {
-    const ok = await unlockAudio();
-    setUnlocked(ok);
-    return ok;
+  useEffect(() => {
+    setAmbientMuted(muted);
+  }, [muted]);
+
+  const setMuted = useCallback((v: boolean) => {
+    setMutedState(v);
+    setAmbientMuted(v);
   }, []);
 
+  const setTone = useCallback((next: ToneId) => {
+    setToneState(next);
+    setAmbientTone(next);
+  }, []);
+
+  const startAmbient = useCallback(() => {
+    const h = ensureAmbient({ muted, tone, reducedMotion });
+    const playing = !!h || isAmbientPlaying();
+    setAmbientPlaying(playing);
+    return playing;
+  }, [muted, tone, reducedMotion]);
+
+  const stopAmbientBed = useCallback(() => {
+    stopAmbient();
+    setAmbientPlaying(false);
+  }, []);
+
+  const unlock = useCallback(async () => {
+    const ok = await unlockAudio();
+    if (!ok) return false;
+    setUnlocked(true);
+    const h = ensureAmbient({
+      muted: false,
+      tone: getAmbientTone(),
+      reducedMotion,
+    });
+    setMutedState(false);
+    setAmbientPlaying(!!h);
+    setToneState(getAmbientTone());
+    return true;
+  }, [reducedMotion]);
+
   const value = useMemo(
-    () => ({ muted, unlocked, reducedMotion, setMuted, unlock }),
-    [muted, unlocked, reducedMotion, unlock],
+    () => ({
+      muted,
+      unlocked,
+      reducedMotion,
+      ambientPlaying,
+      tone,
+      setMuted,
+      setTone,
+      unlock,
+      startAmbient,
+      stopAmbientBed,
+    }),
+    [
+      muted,
+      unlocked,
+      reducedMotion,
+      ambientPlaying,
+      tone,
+      setMuted,
+      setTone,
+      unlock,
+      startAmbient,
+      stopAmbientBed,
+    ],
   );
 
   return <AudioUiContext.Provider value={value}>{children}</AudioUiContext.Provider>;
@@ -57,6 +130,7 @@ export function MuteControl({ className = "" }: { className?: string }) {
       onClick={async () => {
         if (!unlocked) {
           await unlock();
+          return;
         }
         setMuted(!muted);
       }}

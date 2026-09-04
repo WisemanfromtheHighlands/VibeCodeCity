@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { startImmersion, type ImmersionHandles, type ToneId } from "@/lib/audio";
+import { type ToneId } from "@/lib/audio";
 import { useAudioUi } from "./MuteControl";
 
 const tones: { id: ToneId; label: string; blurb: string }[] = [
@@ -10,43 +9,36 @@ const tones: { id: ToneId; label: string; blurb: string }[] = [
   { id: "shimmer", label: "Shimmer", blurb: "High air for revision passes" },
 ];
 
+/**
+ * Sound room UI for the shared sitewide ambient bed.
+ * Does not own audio lifecycle — AudioProvider / lib/audio singleton does —
+ * so leaving this page no longer kills the bed.
+ */
 export function SoundImmersion() {
-  const { muted, unlocked, unlock, reducedMotion, setMuted } = useAudioUi();
-  const [tone, setTone] = useState<ToneId>("drone");
-  const [playing, setPlaying] = useState(false);
-  const handles = useRef<ImmersionHandles | null>(null);
-
-  useEffect(() => {
-    return () => {
-      handles.current?.stop();
-      handles.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    handles.current?.setMuted(muted);
-  }, [muted]);
-
-  useEffect(() => {
-    if (playing) handles.current?.setTone(tone);
-  }, [tone, playing]);
+  const {
+    muted,
+    unlocked,
+    unlock,
+    ambientPlaying,
+    tone,
+    setTone,
+    setMuted,
+    startAmbient,
+    stopAmbientBed,
+  } = useAudioUi();
 
   const toggle = async () => {
     if (!unlocked) {
       const ok = await unlock();
       if (!ok) return;
-    }
-    if (playing) {
-      handles.current?.stop();
-      handles.current = null;
-      setPlaying(false);
       return;
     }
-    const h = startImmersion({ muted, tone, reducedMotion });
-    if (!h) return;
-    handles.current = h;
-    setPlaying(true);
-    if (muted) setMuted(false);
+    if (ambientPlaying) {
+      stopAmbientBed();
+      return;
+    }
+    const ok = startAmbient();
+    if (ok && muted) setMuted(false);
   };
 
   return (
@@ -56,8 +48,9 @@ export function SoundImmersion() {
           <p className="font-display text-xs tracking-[0.24em] text-solar-gold">SOUND ROOM</p>
           <h2 className="mt-2 font-display text-2xl text-white sm:text-3xl">Intentional immersion</h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
-            Soft generative beds for creative sessions. Not therapy, not medical, not a product pitch —
-            just atmosphere you control. First gesture unlocks audio in the browser.
+            Soft generative beds for creative sessions. Once unlocked, the bed continues as you move
+            through the academy — mute anytime from the corner control. Not therapy, not medical, not
+            a product pitch — just atmosphere you control. First gesture unlocks audio in the browser.
           </p>
         </div>
         <button
@@ -65,7 +58,7 @@ export function SoundImmersion() {
           onClick={() => void toggle()}
           className="rounded-full bg-cyan/15 px-5 py-2.5 text-sm font-semibold text-cyan ring-1 ring-cyan/40 transition duration-medium ease-organic hover:bg-cyan/25"
         >
-          {playing ? "Stop bed" : unlocked ? "Start bed" : "Unlock & start"}
+          {ambientPlaying ? "Stop bed" : unlocked ? "Start bed" : "Unlock & start"}
         </button>
       </div>
 
@@ -87,6 +80,16 @@ export function SoundImmersion() {
           </button>
         ))}
       </div>
+
+      {unlocked && (
+        <p className="mt-6 text-xs text-white/40">
+          {ambientPlaying
+            ? muted
+              ? "Ambient is running sitewide — currently muted."
+              : "Ambient is running sitewide. Leave this page; the bed stays with you."
+            : "Ambient is paused. Start the bed, or tap Enable sound elsewhere after a gesture."}
+        </p>
+      )}
     </div>
   );
 }
