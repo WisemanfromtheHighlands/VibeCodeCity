@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   ensureAmbient,
@@ -20,6 +21,7 @@ type AudioUiState = {
   tone: ToneId;
   setMuted: (v: boolean) => void;
   setTone: (tone: ToneId) => void;
+  /** Resume AudioContext only — does NOT start the soundtrack. */
   unlock: () => Promise<boolean>;
   startAmbient: () => boolean;
   stopAmbientBed: () => void;
@@ -28,7 +30,7 @@ type AudioUiState = {
 const AudioUiContext = createContext<AudioUiState | null>(null);
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
-  const [muted, setMutedState] = useState(false);
+  const [muted, setMutedState] = useState(true);
   const [unlocked, setUnlocked] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [ambientPlaying, setAmbientPlaying] = useState(false);
@@ -72,16 +74,10 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     const ok = await unlockAudio();
     if (!ok) return false;
     setUnlocked(true);
-    const h = ensureAmbient({
-      muted: false,
-      tone: getAmbientTone(),
-      reducedMotion,
-    });
-    setMutedState(false);
-    setAmbientPlaying(!!h);
     setToneState(getAmbientTone());
+    // Opt-in only: never auto-start ambient on unlock / Enter.
     return true;
-  }, [reducedMotion]);
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -119,23 +115,33 @@ export function useAudioUi() {
   return ctx;
 }
 
+/**
+ * Corner mute UI. Silent by default.
+ * Mute/Unmute only when the soundtrack is already running (opted in on /sound).
+ * Otherwise offers a clear link to the Soundtrack room — no surprise auto-start.
+ */
 export function MuteControl({ className = "" }: { className?: string }) {
-  const { muted, setMuted, unlocked, unlock } = useAudioUi();
+  const { muted, setMuted, ambientPlaying } = useAudioUi();
+
+  if (!ambientPlaying) {
+    return (
+      <Link
+        href="/sound"
+        className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/70 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-cyan/40 hover:text-cyan ${className}`}
+      >
+        Soundtrack
+      </Link>
+    );
+  }
 
   return (
     <button
       type="button"
       className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/80 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-cyan/40 hover:text-cyan ${className}`}
       aria-pressed={muted}
-      onClick={async () => {
-        if (!unlocked) {
-          await unlock();
-          return;
-        }
-        setMuted(!muted);
-      }}
+      onClick={() => setMuted(!muted)}
     >
-      {!unlocked ? "Enable sound" : muted ? "Unmute" : "Mute"}
+      {muted ? "Unmute" : "Mute"}
     </button>
   );
 }
