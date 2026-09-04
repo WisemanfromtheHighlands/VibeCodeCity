@@ -6,7 +6,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const links = [
-  { href: "/orientation", label: "Orientation" },
+  { href: "/orientation", label: "Orient" },
   { href: "/practice", label: "Practice" },
   { href: "/sound", label: "Sound" },
   { href: "/field", label: "Field" },

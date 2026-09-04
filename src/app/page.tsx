@@ -32,19 +32,19 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
           {[
             {
-              title: "Orientation",
+              title: "Orient",
               href: "/orientation",
-              body: "Map the academy: literacy, sound, field, and how to move without rushing.",
+              body: "New here? What this place is, how a visit works, and a plain path from zero to fluent.",
             },
             {
               title: "Sound",
               href: "/sound",
-              body: "Unlock soft generative beds. Stay present while you draft and revise.",
+              body: "Unlock once — soft ambient can follow you sitewide. Mute anytime. Atmosphere, not therapy.",
             },
             {
               title: "Tuning Field",
               href: "/field",
-              body: "Gesture through teaching prompts that train collaborative AI craft.",
+              body: "Learn by gesture. Move through prompts that train collaborative AI craft.",
             },
           ].map((card) => (
             <Link

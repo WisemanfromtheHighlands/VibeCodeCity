@@ -13,8 +13,9 @@ export default function SoundPage() {
         Intentional atmosphere
       </h1>
       <p className="mt-4 max-w-2xl text-white/65">
-        Drop into deeper creative states through intentional sound and entrainment. Beds are optional,
-        local, and always under your mute control. No medical claims.
+        Drop into deeper creative states through intentional sound. Unlock once (Enter, Enable sound,
+        or Start bed) — soft ambient continues as you move through the academy. Mute stays global.
+        Beds are optional and local to your browser. No medical claims.
       </p>
       <div className="mt-10">
         <SoundImmersion />
