@@ -22,7 +22,7 @@ const fade = {
 };
 
 export function Hero() {
-  const { reducedMotion, unlock } = useAudioUi();
+  const { reducedMotion } = useAudioUi();
   const stageRef = useRef<HTMLElement>(null);
 
   const mx = useMotionValue(0);
@@ -58,21 +58,17 @@ export function Hero() {
       onPointerLeave={onPointerLeave}
       className="relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-void"
     >
-      {/* Living field */}
       <LivingGeometry className="z-0" />
 
-      {/* Atmospheric orbs */}
       <div className="hero-orb hero-orb-magenta" aria-hidden />
       <div className="hero-orb hero-orb-cyan" aria-hidden />
       <div className="hero-orb hero-orb-solar" aria-hidden />
       <div className="hero-orb hero-orb-chloro" aria-hidden />
 
-      {/* Soft vignette + grain */}
       <div className="hero-vignette z-[1]" aria-hidden />
       <div className="hero-grain z-[1] opacity-40" aria-hidden />
       <div className="pointer-events-none absolute inset-0 z-[1] grid-noise opacity-35" aria-hidden />
 
-      {/* Copy layer */}
       <motion.div
         className="relative z-[2] mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-24 sm:px-6 lg:py-28"
         style={reducedMotion ? undefined : { x: parallaxX, y: parallaxY }}
@@ -103,8 +99,8 @@ export function Hero() {
           variants={fade}
         >
           An immersive academy for creative AI literacy, built for minds that think differently.
-          Learn to wield AI as a tool. Drop into deeper creative states through intentional sound
-          and entrainment. Create with more presence, less friction.
+          Learn to wield AI as a tool. Optional soundtrack for focus while you learn. Create with
+          more presence, less friction.
         </motion.p>
         <motion.div
           className="mt-10 flex flex-wrap items-center gap-4"
@@ -115,12 +111,15 @@ export function Hero() {
         >
           <Link
             href="/orientation"
-            onClick={() => {
-              void unlock();
-            }}
             className="rounded-full bg-magenta px-7 py-3 font-display text-sm font-semibold tracking-wide text-white shadow-[0_0_32px_rgba(255,42,109,0.35)] transition duration-medium ease-organic hover:bg-magenta/90 hover:shadow-[0_0_40px_rgba(255,42,109,0.5)]"
           >
             Enter
+          </Link>
+          <Link
+            href="/city"
+            className="rounded-full border border-cyan/40 bg-cyan/10 px-7 py-3 font-display text-sm font-semibold tracking-wide text-cyan shadow-[0_0_28px_rgba(0,240,255,0.18)] transition duration-medium ease-organic hover:border-cyan/70 hover:bg-cyan/15"
+          >
+            Enter the city
           </Link>
           <Link
             href="/practice"
@@ -136,11 +135,10 @@ export function Hero() {
           animate="show"
           variants={fade}
         >
-          Hybrid nocturnal craft · solar accents · no waitlist theater
+          Hybrid nocturnal craft · solar accents · soundtrack stays optional
         </motion.p>
       </motion.div>
 
-      {/* Scroll hint into pathways */}
       <motion.div
         className="relative z-[2] flex justify-center pb-8 pt-2"
         initial={reducedMotion ? false : { opacity: 0 }}
