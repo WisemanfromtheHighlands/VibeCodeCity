@@ -26,7 +26,7 @@ export const FILLER: { position: [number, number, number]; size: [number, number
 
 export type CityMode = "idle" | "fps" | "orbit";
 
-/** Visual quality for City Glimpse — low skips bloom/grain and uses a cheaper sky */
+/** Visual quality for City Glimpse — low uses cheaper sky / lower pixel ratio */
 export type CityQuality = "high" | "low";
 
 export const CITY_QUALITY_KEY = "vcc-city-quality";
