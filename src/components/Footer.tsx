@@ -6,10 +6,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div>
           <p className="font-display text-sm font-semibold tracking-[0.16em] text-paper/90">
-            VibeCodeCity
-          </p>
-          <p className="mt-1 font-display text-xs tracking-[0.14em] text-gold/80">
-            vibecodecity.cloud
+            VibeCodeCity.cloud
           </p>
           <p className="mt-2 max-w-md text-sm text-paper/55">
             An immersive academy for creative AI literacy. Built by Ocelot Claw Studios.
@@ -34,7 +31,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-paper/5 px-4 py-4 text-center text-xs text-paper/40 sm:px-6">
-        © VibeCodeCity · vibecodecity.cloud
+        © VibeCodeCity.cloud
       </div>
     </footer>
   );

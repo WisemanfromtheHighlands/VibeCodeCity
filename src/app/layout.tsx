@@ -21,16 +21,16 @@ const figtree = Figtree({
 
 export const metadata: Metadata = {
   title: {
-    default: "VibeCodeCity — Creative AI Literacy Academy",
-    template: "%s · VibeCodeCity",
+    default: "VibeCodeCity.cloud — Creative AI Literacy Academy",
+    template: "%s · VibeCodeCity.cloud",
   },
   description:
     "An immersive academy for creative AI literacy, built for minds that think differently. Learn to wield AI as a tool. Drop into deeper creative states through intentional sound and entrainment.",
   metadataBase: new URL("https://vibecodecity.cloud"),
   openGraph: {
-    title: "VibeCodeCity",
+    title: "VibeCodeCity.cloud",
     description: "Immersive academy for creative AI literacy.",
-    siteName: "VibeCodeCity",
+    siteName: "VibeCodeCity.cloud",
     type: "website",
   },
 };

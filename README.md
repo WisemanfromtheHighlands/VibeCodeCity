@@ -1,4 +1,4 @@
-# VibeCodeCity
+# VibeCodeCity.cloud
 
 Immersive creative-AI literacy academy.
 
@@ -24,4 +24,4 @@ C:/Users/Wiseman/Dev/VibeCodeCity — fetch and checkout rebuild/academy-v1 then
 Real: IA, hero copy, modules, audio, Tuning Field, playground, notes, reduced-motion.
 Deferred: no LLM API, auth, or CMS.
 
-Brand: VibeCodeCity / Ocelot Claw Studios. Footer: (c) VibeCodeCity
+Brand: VibeCodeCity.cloud / Ocelot Claw Studios. Footer: (c) VibeCodeCity.cloud
