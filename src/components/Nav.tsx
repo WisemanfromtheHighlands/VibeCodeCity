@@ -34,13 +34,13 @@ export function Nav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-void/80 backdrop-blur-xl">
+    <header className="nav-glass sticky top-0 z-50">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link
           href="/"
-          className="font-display text-sm font-bold tracking-[0.18em] text-white transition duration-medium ease-organic hover:text-cyan sm:text-base"
+          className="font-display text-sm font-bold tracking-[0.18em] text-paper transition duration-medium ease-organic hover:text-gold sm:text-base"
         >
-          VIBECODECITY
+          VibeCodeCity
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
@@ -49,8 +49,8 @@ export function Nav() {
               type="button"
               className={`rounded-full px-3 py-1.5 text-sm transition duration-fast ease-organic ${
                 learnActive
-                  ? "bg-white/10 text-cyan"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                  ? "bg-paper/10 text-chlorophyll"
+                  : "text-paper/70 hover:bg-paper/5 hover:text-paper"
               }`}
               aria-expanded={learnOpen}
               aria-haspopup="true"
@@ -65,7 +65,7 @@ export function Nav() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute left-0 top-full z-50 mt-2 min-w-[12rem] rounded-2xl border border-white/10 bg-void/95 p-2 shadow-xl backdrop-blur-xl"
+                  className="absolute left-0 top-full z-50 mt-2 min-w-[12rem] rounded-2xl border border-cyan/20 bg-void/95 p-2 shadow-xl backdrop-blur-xl"
                 >
                   {classNav.map((link) => {
                     const active =
@@ -76,7 +76,9 @@ export function Nav() {
                         href={link.href}
                         onClick={() => setLearnOpen(false)}
                         className={`block rounded-xl px-3 py-2 text-sm ${
-                          active ? "bg-white/10 text-cyan" : "text-white/75 hover:bg-white/5 hover:text-white"
+                          active
+                            ? "bg-paper/10 text-chlorophyll"
+                            : "text-paper/75 hover:bg-paper/5 hover:text-paper"
                         }`}
                       >
                         {link.label}
@@ -96,8 +98,8 @@ export function Nav() {
                 href={link.href}
                 className={`rounded-full px-3 py-1.5 text-sm transition duration-fast ease-organic ${
                   active
-                    ? "bg-white/10 text-cyan"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                    ? "bg-paper/10 text-gold"
+                    : "text-paper/70 hover:bg-paper/5 hover:text-paper"
                 }`}
               >
                 {link.label}
@@ -108,7 +110,7 @@ export function Nav() {
 
         <button
           type="button"
-          className="surface rounded-full px-3 py-1.5 text-sm text-white/80 md:hidden"
+          className="surface rounded-full px-3 py-1.5 text-sm text-paper/80 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -125,11 +127,11 @@ export function Nav() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-white/10 md:hidden"
+            className="overflow-hidden border-t border-cyan/20 md:hidden"
             aria-label="Mobile"
           >
             <div className="flex flex-col gap-1 px-4 py-3">
-              <p className="px-3 pt-1 text-[10px] font-display tracking-[0.2em] text-white/35">
+              <p className="px-3 pt-1 text-[10px] font-display tracking-[0.2em] text-paper/35">
                 LEARN
               </p>
               {classNav.map((link) => (
@@ -137,12 +139,12 @@ export function Nav() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-cyan"
+                  className="rounded-lg px-3 py-2 text-sm text-paper/80 hover:bg-paper/5 hover:text-chlorophyll"
                 >
                   {link.label}
                 </Link>
               ))}
-              <p className="px-3 pt-3 text-[10px] font-display tracking-[0.2em] text-white/35">
+              <p className="px-3 pt-3 text-[10px] font-display tracking-[0.2em] text-paper/35">
                 ROOMS
               </p>
               {roomLinks.map((link) => (
@@ -150,7 +152,7 @@ export function Nav() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-cyan"
+                  className="rounded-lg px-3 py-2 text-sm text-paper/80 hover:bg-paper/5 hover:text-gold"
                 >
                   {link.label}
                 </Link>
