@@ -6,11 +6,11 @@ import { useAudioUi } from "./MuteControl";
 type Accent = { r: number; g: number; b: number; a: number };
 
 const ACCENTS: Accent[] = [
-  { r: 255, g: 42, b: 109, a: 0.55 }, // magenta
-  { r: 0, g: 240, b: 255, a: 0.5 }, // cyan
-  { r: 177, g: 78, b: 255, a: 0.48 }, // violet
-  { r: 245, g: 197, b: 66, a: 0.42 }, // solar-gold
-  { r: 61, g: 220, b: 151, a: 0.4 }, // chlorophyll
+  { r: 225, g: 29, b: 143, a: 0.42 }, // magenta (sparse transit)
+  { r: 62, g: 224, b: 232, a: 0.45 }, // cyan (water)
+  { r: 107, g: 63, b: 160, a: 0.38 }, // dusk violet
+  { r: 201, g: 162, b: 39, a: 0.48 }, // gold (solar horizon)
+  { r: 124, g: 255, b: 154, a: 0.4 }, // chlorophyll (terraces)
 ];
 
 function rgba(c: Accent, a?: number) {
@@ -149,13 +149,13 @@ export function LivingGeometry({ className = "" }: { className?: string }) {
       const cy = h * 0.48;
       const base = Math.min(w, h) * 0.28;
 
-      ctx.fillStyle = "rgba(7,6,11,0.15)";
+      ctx.fillStyle = "rgba(7,6,12,0.15)";
       ctx.fillRect(0, 0, w, h);
 
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, base * 2.2);
-      glow.addColorStop(0, "rgba(177,78,255,0.12)");
-      glow.addColorStop(0.4, "rgba(0,240,255,0.06)");
-      glow.addColorStop(1, "rgba(7,6,11,0)");
+      glow.addColorStop(0, "rgba(107,63,160,0.12)");
+      glow.addColorStop(0.4, "rgba(62,224,232,0.06)");
+      glow.addColorStop(1, "rgba(7,6,12,0)");
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
 
@@ -205,10 +205,10 @@ export function LivingGeometry({ className = "" }: { className?: string }) {
         cy,
         base * (2.4 + pointer.coherence * 0.3),
       );
-      bloom.addColorStop(0, `rgba(177,78,255,${0.1 + pointer.coherence * 0.06})`);
-      bloom.addColorStop(0.35, `rgba(0,240,255,${0.05 + pointer.coherence * 0.04})`);
-      bloom.addColorStop(0.7, `rgba(61,220,151,${0.03 + pointer.coherence * 0.02})`);
-      bloom.addColorStop(1, "rgba(7,6,11,0)");
+      bloom.addColorStop(0, `rgba(107,63,160,${0.08 + pointer.coherence * 0.05})`);
+      bloom.addColorStop(0.35, `rgba(62,224,232,${0.05 + pointer.coherence * 0.03})`);
+      bloom.addColorStop(0.7, `rgba(124,255,154,${0.03 + pointer.coherence * 0.02})`);
+      bloom.addColorStop(1, "rgba(7,6,12,0)");
       ctx.fillStyle = bloom;
       ctx.fillRect(0, 0, w, h);
 
@@ -216,9 +216,9 @@ export function LivingGeometry({ className = "" }: { className?: string }) {
       const px = pointer.x * w;
       const py = pointer.y * h;
       const pg = ctx.createRadialGradient(px, py, 0, px, py, Math.max(w, h) * 0.28);
-      pg.addColorStop(0, `rgba(255,42,109,${0.06 + (1 - pointer.coherence) * 0.05})`);
-      pg.addColorStop(0.5, `rgba(245,197,66,${0.03 * pointer.coherence})`);
-      pg.addColorStop(1, "rgba(7,6,11,0)");
+      pg.addColorStop(0, `rgba(225,29,143,${0.05 + (1 - pointer.coherence) * 0.04})`);
+      pg.addColorStop(0.5, `rgba(201,162,39,${0.04 * pointer.coherence})`);
+      pg.addColorStop(1, "rgba(7,6,12,0)");
       ctx.fillStyle = pg;
       ctx.fillRect(0, 0, w, h);
 
