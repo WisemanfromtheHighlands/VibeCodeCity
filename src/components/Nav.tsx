@@ -38,9 +38,14 @@ export function Nav() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link
           href="/"
-          className="font-display text-sm font-bold tracking-[0.18em] text-paper transition duration-medium ease-organic hover:text-gold sm:text-base"
+          className="group flex flex-col leading-tight transition duration-medium ease-organic"
         >
-          VibeCodeCity
+          <span className="font-display text-sm font-bold tracking-[0.18em] text-paper group-hover:text-gold sm:text-base">
+            VibeCodeCity
+          </span>
+          <span className="font-display text-[10px] tracking-[0.16em] text-gold/80 sm:text-[11px]">
+            vibecodecity.cloud
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">

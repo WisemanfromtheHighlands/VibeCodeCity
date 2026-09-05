@@ -143,15 +143,6 @@ export function Hero() {
             Begin
           </Link>
         </motion.div>
-        <motion.p
-          className="mt-8 text-sm text-paper/45"
-          custom={4}
-          initial={reducedMotion ? false : "hidden"}
-          animate="show"
-          variants={fade}
-        >
-          Wine-violet dusk · solar-gold horizon · soundtrack stays optional
-        </motion.p>
       </motion.div>
 
       <motion.div
