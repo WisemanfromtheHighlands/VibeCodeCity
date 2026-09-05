@@ -56,25 +56,28 @@ export function Hero() {
       ref={stageRef}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className="relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-void"
+      className="hero-stage relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden"
+      aria-label="VibeCodeCity hero"
     >
+      {/* Full-bleed stage: LivingGeometry placeholder until muted looping poster/video */}
       <LivingGeometry className="z-0" />
 
-      <div className="hero-orb hero-orb-magenta" aria-hidden />
-      <div className="hero-orb hero-orb-cyan" aria-hidden />
       <div className="hero-orb hero-orb-solar" aria-hidden />
+      <div className="hero-orb hero-orb-cyan" aria-hidden />
       <div className="hero-orb hero-orb-chloro" aria-hidden />
+      <div className="hero-orb hero-orb-magenta" aria-hidden />
 
+      <div className="hero-scrim z-[1]" aria-hidden />
       <div className="hero-vignette z-[1]" aria-hidden />
-      <div className="hero-grain z-[1] opacity-40" aria-hidden />
-      <div className="pointer-events-none absolute inset-0 z-[1] grid-noise opacity-35" aria-hidden />
+      <div className="hero-grain z-[1] opacity-35" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 z-[1] grid-noise opacity-30" aria-hidden />
 
       <motion.div
         className="relative z-[2] mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-24 sm:px-6 lg:py-28"
         style={reducedMotion ? undefined : { x: parallaxX, y: parallaxY }}
       >
         <motion.p
-          className="mb-4 font-display text-xs font-semibold tracking-[0.28em] text-magenta text-glow-magenta"
+          className="mb-4 font-display text-xs font-semibold tracking-[0.28em] text-gold/90"
           custom={0}
           initial={reducedMotion ? false : "hidden"}
           animate="show"
@@ -83,7 +86,7 @@ export function Hero() {
           OCELOT CLAW STUDIOS
         </motion.p>
         <motion.h1
-          className="max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
+          className="max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-tight text-paper sm:text-5xl md:text-6xl lg:text-7xl"
           custom={1}
           initial={reducedMotion ? false : "hidden"}
           animate="show"
@@ -91,8 +94,20 @@ export function Hero() {
         >
           VibeCodeCity
         </motion.h1>
+        <motion.div
+          className="mt-3"
+          custom={1}
+          initial={reducedMotion ? false : "hidden"}
+          animate="show"
+          variants={fade}
+        >
+          <p className="font-display text-sm tracking-[0.2em] text-gold sm:text-base">
+            vibecodecity.cloud
+          </p>
+          <div className="wordmark-hairline mt-3" aria-hidden />
+        </motion.div>
         <motion.p
-          className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl"
+          className="mt-6 max-w-2xl text-lg leading-relaxed text-paper/75 sm:text-xl"
           custom={2}
           initial={reducedMotion ? false : "hidden"}
           animate="show"
@@ -111,42 +126,42 @@ export function Hero() {
         >
           <Link
             href="/orientation"
-            className="rounded-full bg-magenta px-7 py-3 font-display text-sm font-semibold tracking-wide text-white shadow-[0_0_32px_rgba(255,42,109,0.35)] transition duration-medium ease-organic hover:bg-magenta/90 hover:shadow-[0_0_40px_rgba(255,42,109,0.5)]"
+            className="rounded-full bg-gold px-7 py-3 font-display text-sm font-semibold tracking-wide text-void shadow-[0_0_28px_rgba(201,162,39,0.28)] transition duration-medium ease-organic hover:bg-gold-soft hover:shadow-[0_0_36px_rgba(201,162,39,0.4)]"
           >
             Enter
           </Link>
           <Link
             href="/city"
-            className="rounded-full border border-cyan/40 bg-cyan/10 px-7 py-3 font-display text-sm font-semibold tracking-wide text-cyan shadow-[0_0_28px_rgba(0,240,255,0.18)] transition duration-medium ease-organic hover:border-cyan/70 hover:bg-cyan/15"
+            className="rounded-full border border-cyan/35 bg-cyan/10 px-7 py-3 font-display text-sm font-semibold tracking-wide text-cyan shadow-[0_0_24px_rgba(62,224,232,0.12)] transition duration-medium ease-organic hover:border-cyan/60 hover:bg-cyan/15"
           >
             Enter the city
           </Link>
           <Link
             href="/orientation"
-            className="rounded-full border border-white/20 bg-white/5 px-7 py-3 font-display text-sm font-semibold tracking-wide text-white/90 transition duration-medium ease-organic hover:border-cyan/50 hover:text-cyan"
+            className="rounded-full border border-paper/20 bg-paper/5 px-7 py-3 font-display text-sm font-semibold tracking-wide text-paper/90 transition duration-medium ease-organic hover:border-chlorophyll/50 hover:text-chlorophyll"
           >
             Begin
           </Link>
         </motion.div>
         <motion.p
-          className="mt-8 text-sm text-white/45"
+          className="mt-8 text-sm text-paper/45"
           custom={4}
           initial={reducedMotion ? false : "hidden"}
           animate="show"
           variants={fade}
         >
-          Hybrid nocturnal craft · solar accents · soundtrack stays optional
+          Wine-violet dusk · solar-gold horizon · soundtrack stays optional
         </motion.p>
       </motion.div>
 
       <motion.div
         className="relative z-[2] flex justify-center pb-8 pt-2"
         initial={reducedMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 0.45 }}
+        animate={{ opacity: 0.4 }}
         transition={{ delay: 1.1, duration: 0.7, ease: ORGANIC }}
         aria-hidden
       >
-        <div className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent" />
+        <div className="h-8 w-px bg-gradient-to-b from-gold/50 to-transparent" />
       </motion.div>
     </section>
   );
