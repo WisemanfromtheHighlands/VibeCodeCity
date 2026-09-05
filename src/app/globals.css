@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Grade tokens — wine-violet dusk, solar-gold horizon, chlorophyll terraces */
+  --void: #07060C;
+  --dusk-wine: #1A1024;
+  --paper: #EDE6D6;
+  --gold: #C9A227;
+  --gold-soft: #F4E4A6;
+  --magenta: #E11D8F;
+  --cyan: #3EE0E8;
+  --moss: #1F3D2A;
+  --chlorophyll: #7CFF9A;
+  /* Compat aliases */
+  --solar-gold: var(--gold);
+  --violet: #6B3FA0;
+  --surface-1: rgba(237, 230, 214, 0.04);
+  --surface-2: rgba(237, 230, 214, 0.07);
+  --border-subtle: rgba(237, 230, 214, 0.1);
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 160ms;
+  --duration-medium: 320ms;
+  --duration-slow: 560ms;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, var(--void) 0%, var(--dusk-wine) 100%);
+  background-attachment: fixed;
+  color: var(--paper);
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: rgba(225, 29, 143, 0.35);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+}
+
+.surface {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+}
+
+.surface-2 {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.text-glow-magenta {
+  text-shadow: 0 0 20px rgba(225, 29, 143, 0.35);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 20px rgba(62, 224, 232, 0.3);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 18px rgba(201, 162, 39, 0.28);
+}
+
+.grid-noise {
+  background-image:
+    linear-gradient(rgba(237, 230, 214, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(237, 230, 214, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+/* Nav — dark glass, ~8% paper, 1px cyan ~20% */
+.nav-glass {
+  background: rgba(7, 6, 12, 0.72);
+  backdrop-filter: blur(16px) saturate(1.1);
+  border-bottom: 1px solid rgba(62, 224, 232, 0.2);
+  box-shadow: 0 1px 0 rgba(237, 230, 214, 0.08) inset;
+}
+
+/* Hairline gold under home wordmark */
+.wordmark-hairline {
+  height: 1px;
+  width: 100%;
+  max-width: 12rem;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold) 20%,
+    var(--gold-soft) 50%,
+    var(--gold) 80%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+/* —— Cinematic hero utilities —— */
+.hero-stage {
+  background: linear-gradient(180deg, var(--void) 0%, var(--dusk-wine) 100%);
+}
+
+.hero-scrim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 20%, #07060C 88%);
+}
+
+.hero-vignette {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, rgba(7, 6, 12, 0.5) 78%, rgba(7, 6, 12, 0.88) 100%),
+    linear-gradient(to bottom, rgba(7, 6, 12, 0.28) 0%, transparent 18%, transparent 72%, rgba(7, 6, 12, 0.7) 100%);
+}
+
+.hero-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+.hero-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.45;
+  z-index: 0;
+}
+
+/* Sparse magenta transit — not pink-fog */
+.hero-orb-magenta {
+  width: min(36vw, 360px);
+  height: min(36vw, 360px);
+  top: 8%;
+  left: 42%;
+  background: rgba(225, 29, 143, 0.14);
+  opacity: 0.35;
+}
+
+.hero-orb-cyan {
+  width: min(48vw, 480px);
+  height: min(48vw, 480px);
+  bottom: -10%;
+  left: -6%;
+  background: rgba(62, 224, 232, 0.1);
+  opacity: 0.4;
+}
+
+.hero-orb-solar {
+  width: min(32vw, 320px);
+  height: min(32vw, 320px);
+  top: -4%;
+  right: 8%;
+  background: rgba(201, 162, 39, 0.12);
+  opacity: 0.42;
+}
+
+.hero-orb-chloro {
+  width: min(40vw, 400px);
+  height: min(40vw, 400px);
+  bottom: 4%;
+  right: 6%;
+  background: rgba(124, 255, 154, 0.1);
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-orb {
+    opacity: 0.3;
+    filter: blur(64px);
+  }
+}

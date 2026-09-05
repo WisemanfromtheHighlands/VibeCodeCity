@@ -1,0 +1,38 @@
+import Link from "next/link";
+
+export function Footer() {
+  return (
+    <footer className="mt-auto border-t border-paper/10 bg-void/90">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+        <div>
+          <p className="font-display text-sm font-semibold tracking-[0.16em] text-paper/90">
+            VibeCodeCity.cloud
+          </p>
+          <p className="mt-2 max-w-md text-sm text-paper/55">
+            An immersive academy for creative AI literacy. Built by Ocelot Claw Studios.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-4 text-sm text-paper/55">
+          <Link href="/orientation" className="hover:text-chlorophyll">
+            Orientation
+          </Link>
+          <Link href="/learn/what-it-is" className="hover:text-chlorophyll">
+            Learn
+          </Link>
+          <Link href="/practice" className="hover:text-gold">
+            Practice
+          </Link>
+          <Link href="/field" className="hover:text-chlorophyll">
+            Tuning Field
+          </Link>
+          <Link href="/notes" className="hover:text-gold">
+            Notes
+          </Link>
+        </div>
+      </div>
+      <div className="border-t border-paper/5 px-4 py-4 text-center text-xs text-paper/40 sm:px-6">
+        © VibeCodeCity.cloud
+      </div>
+    </footer>
+  );
+}
