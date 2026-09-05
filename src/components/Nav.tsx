@@ -41,10 +41,7 @@ export function Nav() {
           className="group flex flex-col leading-tight transition duration-medium ease-organic"
         >
           <span className="font-display text-sm font-bold tracking-[0.18em] text-paper group-hover:text-gold sm:text-base">
-            VibeCodeCity
-          </span>
-          <span className="font-display text-[10px] tracking-[0.16em] text-gold/80 sm:text-[11px]">
-            vibecodecity.cloud
+            VibeCodeCity.cloud
           </span>
         </Link>
 

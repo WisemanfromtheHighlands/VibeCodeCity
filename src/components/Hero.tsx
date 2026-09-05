@@ -57,7 +57,7 @@ export function Hero() {
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
       className="hero-stage relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden"
-      aria-label="VibeCodeCity hero"
+      aria-label="VibeCodeCity.cloud hero"
     >
       {/* Full-bleed stage: LivingGeometry placeholder until muted looping poster/video */}
       <LivingGeometry className="z-0" />
@@ -92,7 +92,7 @@ export function Hero() {
           animate="show"
           variants={fade}
         >
-          VibeCodeCity
+          VibeCodeCity.cloud
         </motion.h1>
         <motion.div
           className="mt-3"
@@ -101,9 +101,6 @@ export function Hero() {
           animate="show"
           variants={fade}
         >
-          <p className="font-display text-sm tracking-[0.2em] text-gold sm:text-base">
-            vibecodecity.cloud
-          </p>
           <div className="wordmark-hairline mt-3" aria-hidden />
         </motion.div>
         <motion.p
