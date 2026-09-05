@@ -9,12 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        void: "#07060B",
-        magenta: "#FF2A6D",
-        cyan: "#00F0FF",
-        violet: "#B14EFF",
-        "solar-gold": "#F5C542",
-        chlorophyll: "#3DDC97",
+        void: "#07060C",
+        "dusk-wine": "#1A1024",
+        paper: "#EDE6D6",
+        gold: "#C9A227",
+        "gold-soft": "#F4E4A6",
+        magenta: "#E11D8F",
+        cyan: "#3EE0E8",
+        moss: "#1F3D2A",
+        chlorophyll: "#7CFF9A",
+        /* Compat aliases */
+        "solar-gold": "#C9A227",
+        violet: "#6B3FA0",
       },
       fontFamily: {
         display: ["var(--font-syne)", "system-ui", "sans-serif"],
@@ -29,8 +35,11 @@ const config: Config = {
         slow: "560ms",
       },
       backgroundImage: {
+        "dusk-glow":
+          "radial-gradient(ellipse at 20% 0%, rgba(201,162,39,0.1), transparent 50%), radial-gradient(ellipse at 80% 15%, rgba(62,224,232,0.07), transparent 45%), radial-gradient(ellipse at 50% 100%, rgba(124,255,154,0.06), transparent 40%), radial-gradient(ellipse at 55% 40%, rgba(225,29,143,0.05), transparent 35%)",
+        /* Compat: old class name → restrained dusk */
         "rave-glow":
-          "radial-gradient(ellipse at 20% 0%, rgba(255,42,109,0.18), transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(0,240,255,0.12), transparent 45%), radial-gradient(ellipse at 50% 100%, rgba(61,220,151,0.08), transparent 40%)",
+          "radial-gradient(ellipse at 20% 0%, rgba(201,162,39,0.1), transparent 50%), radial-gradient(ellipse at 80% 15%, rgba(62,224,232,0.07), transparent 45%), radial-gradient(ellipse at 50% 100%, rgba(124,255,154,0.06), transparent 40%), radial-gradient(ellipse at 55% 40%, rgba(225,29,143,0.05), transparent 35%)",
       },
     },
   },
