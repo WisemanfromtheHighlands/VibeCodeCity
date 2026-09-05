@@ -122,7 +122,7 @@ export function Hero() {
             Enter the city
           </Link>
           <Link
-            href="/practice"
+            href="/orientation"
             className="rounded-full border border-white/20 bg-white/5 px-7 py-3 font-display text-sm font-semibold tracking-wide text-white/90 transition duration-medium ease-organic hover:border-cyan/50 hover:text-cyan"
           >
             Begin

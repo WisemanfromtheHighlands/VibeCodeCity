@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PracticeCard } from "@/components/PracticeCard";
 import { practiceModules } from "@/lib/modules";
+import { classNav } from "@/lib/lessons";
 
 export default function HomePage() {
   return (
@@ -9,23 +10,36 @@ export default function HomePage() {
       <Hero />
 
       <section
-        id="pathways"
-        className="relative mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 sm:pt-10"
+        id="class"
+        className="relative mx-auto max-w-6xl px-4 pb-12 pt-6 sm:px-6 sm:pt-10"
       >
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="font-display text-xs tracking-[0.24em] text-cyan">PATHWAYS</p>
-            <h2 className="mt-2 font-display text-3xl text-white">Practice rooms</h2>
+            <p className="font-display text-xs tracking-[0.24em] text-magenta">CLASS</p>
+            <h2 className="mt-2 font-display text-3xl text-white">Literacy path</h2>
+            <p className="mt-3 max-w-2xl text-sm text-white/60">
+              From fancy Google to knowing what this is and how to aim it. Four lessons, one real sitting.
+            </p>
           </div>
-          <Link href="/practice" className="text-sm text-white/60 hover:text-cyan">
-            View all modules →
+          <Link href="/orientation" className="text-sm text-white/60 hover:text-cyan">
+            Start orientation →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {practiceModules.slice(0, 4).map((mod) => (
-            <PracticeCard key={mod.slug} mod={mod} />
+        <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {classNav.map((step, i) => (
+            <li key={step.href}>
+              <Link
+                href={step.href}
+                className="flex h-full flex-col rounded-3xl border border-white/10 bg-void/40 p-5 transition duration-medium ease-organic hover:border-magenta/40"
+              >
+                <span className="font-display text-xs text-cyan">
+                  {String(i).padStart(2, "0")}
+                </span>
+                <span className="mt-2 font-display text-lg text-white">{step.label}</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="border-y border-white/10 bg-white/[0.02]">
@@ -34,7 +48,7 @@ export default function HomePage() {
             {
               title: "Orient",
               href: "/orientation",
-              body: "New here? What this place is, how a visit works, and a plain path from zero to fluent.",
+              body: "Class map and three questions. Start here — not a waitlist.",
             },
             {
               title: "City",
@@ -60,6 +74,26 @@ export default function HomePage() {
               <h3 className="font-display text-xl text-white">{card.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-white/60">{card.body}</p>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      <section
+        id="extra-rooms"
+        className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6"
+      >
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="font-display text-xs tracking-[0.24em] text-white/40">EXTRA ROOMS</p>
+            <h2 className="mt-2 font-display text-2xl text-white/80">Optional modules</h2>
+            <p className="mt-2 max-w-xl text-sm text-white/45">
+              Earlier practice rooms. They stay available but do not outrank the class path.
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 grid gap-4 opacity-80 sm:grid-cols-2">
+          {practiceModules.slice(0, 4).map((mod) => (
+            <PracticeCard key={mod.slug} mod={mod} />
           ))}
         </div>
       </section>

@@ -23,7 +23,7 @@ export default async function PracticeModulePage({ params }: Props) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-20">
       <Link href="/practice" className="text-sm text-white/50 hover:text-cyan">
-        ← All modules
+        ← Practice / extra rooms
       </Link>
       <p className="mt-6 font-display text-xs tracking-[0.24em] text-white/50 uppercase">
         {mod.duration} · {mod.subtitle}
