@@ -127,7 +127,7 @@ export function MuteControl({ className = "" }: { className?: string }) {
     return (
       <Link
         href="/sound"
-        className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/70 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-cyan/40 hover:text-cyan ${className}`}
+        className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/70 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-magenta/40 hover:text-magenta ${className}`}
       >
         Soundtrack
       </Link>
@@ -137,7 +137,7 @@ export function MuteControl({ className = "" }: { className?: string }) {
   return (
     <button
       type="button"
-      className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/80 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-cyan/40 hover:text-cyan ${className}`}
+      className={`surface fixed bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium tracking-wide text-white/80 shadow-lg shadow-black/40 transition duration-medium ease-organic hover:border-magenta/40 hover:text-magenta ${className}`}
       aria-pressed={muted}
       onClick={() => setMuted(!muted)}
     >

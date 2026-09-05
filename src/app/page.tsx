@@ -15,13 +15,13 @@ export default function HomePage() {
       >
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="font-display text-xs tracking-[0.24em] text-magenta">CLASS</p>
+            <p className="font-display text-xs tracking-[0.24em] text-gold">CLASS</p>
             <h2 className="mt-2 font-display text-3xl text-white">Literacy path</h2>
             <p className="mt-3 max-w-2xl text-sm text-white/60">
               From fancy Google to knowing what this is and how to aim it. Four lessons, one real sitting.
             </p>
           </div>
-          <Link href="/orientation" className="text-sm text-white/60 hover:text-cyan">
+          <Link href="/orientation" className="text-sm text-white/60 hover:text-chlorophyll">
             Start orientation →
           </Link>
         </div>
@@ -30,9 +30,9 @@ export default function HomePage() {
             <li key={step.href}>
               <Link
                 href={step.href}
-                className="flex h-full flex-col rounded-3xl border border-white/10 bg-void/40 p-5 transition duration-medium ease-organic hover:border-magenta/40"
+                className="flex h-full flex-col rounded-3xl border border-white/10 bg-void/40 p-5 transition duration-medium ease-organic hover:border-gold/40"
               >
-                <span className="font-display text-xs text-cyan">
+                <span className="font-display text-xs text-gold">
                   {String(i).padStart(2, "0")}
                 </span>
                 <span className="mt-2 font-display text-lg text-white">{step.label}</span>
