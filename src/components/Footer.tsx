@@ -16,6 +16,9 @@ export function Footer() {
           <Link href="/orientation" className="hover:text-cyan">
             Orientation
           </Link>
+          <Link href="/learn/what-it-is" className="hover:text-cyan">
+            Learn
+          </Link>
           <Link href="/practice" className="hover:text-cyan">
             Practice
           </Link>
