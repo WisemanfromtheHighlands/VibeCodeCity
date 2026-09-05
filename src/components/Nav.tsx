@@ -2,22 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { classNav } from "@/lib/lessons";
 
-const links = [
+const roomLinks = [
   { href: "/city", label: "City" },
-  { href: "/orientation", label: "Orient" },
-  { href: "/practice", label: "Practice" },
   { href: "/sound", label: "Sound" },
   { href: "/field", label: "Field" },
-  { href: "/playground", label: "Playground" },
   { href: "/notes", label: "Notes" },
+  { href: "/playground", label: "Playground" },
 ];
 
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(false);
+  const learnRef = useRef<HTMLDivElement>(null);
+
+  const learnActive =
+    pathname === "/orientation" ||
+    pathname === "/practice" ||
+    pathname.startsWith("/learn/");
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (!learnRef.current?.contains(e.target as Node)) setLearnOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-void/80 backdrop-blur-xl">
@@ -30,7 +44,51 @@ export function Nav() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
-          {links.map((link) => {
+          <div className="relative" ref={learnRef}>
+            <button
+              type="button"
+              className={`rounded-full px-3 py-1.5 text-sm transition duration-fast ease-organic ${
+                learnActive
+                  ? "bg-white/10 text-cyan"
+                  : "text-white/70 hover:bg-white/5 hover:text-white"
+              }`}
+              aria-expanded={learnOpen}
+              aria-haspopup="true"
+              onClick={() => setLearnOpen((v) => !v)}
+            >
+              Learn
+            </button>
+            <AnimatePresence>
+              {learnOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute left-0 top-full z-50 mt-2 min-w-[12rem] rounded-2xl border border-white/10 bg-void/95 p-2 shadow-xl backdrop-blur-xl"
+                >
+                  {classNav.map((link) => {
+                    const active =
+                      pathname === link.href || pathname.startsWith(link.href + "/");
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setLearnOpen(false)}
+                        className={`block rounded-xl px-3 py-2 text-sm ${
+                          active ? "bg-white/10 text-cyan" : "text-white/75 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {roomLinks.map((link) => {
             const active = pathname === link.href || pathname.startsWith(link.href + "/");
             return (
               <Link
@@ -71,7 +129,23 @@ export function Nav() {
             aria-label="Mobile"
           >
             <div className="flex flex-col gap-1 px-4 py-3">
-              {links.map((link) => (
+              <p className="px-3 pt-1 text-[10px] font-display tracking-[0.2em] text-white/35">
+                LEARN
+              </p>
+              {classNav.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-cyan"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <p className="px-3 pt-3 text-[10px] font-display tracking-[0.2em] text-white/35">
+                ROOMS
+              </p>
+              {roomLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
