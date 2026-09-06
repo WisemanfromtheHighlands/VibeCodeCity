@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useCallback, useRef } from "react";
 import { useAudioUi } from "./MuteControl";
 import { LivingGeometry } from "./LivingGeometry";
+import { HeroPlate } from "./HeroPlate";
 
 const ORGANIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -59,13 +60,15 @@ export function Hero() {
       className="hero-stage relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden"
       aria-label="VibeCodeCity.cloud hero"
     >
-      {/* Full-bleed stage: LivingGeometry placeholder until muted looping poster/video */}
-      <LivingGeometry className="z-0" />
+      {/* Stack back→front: wash → plate → geometry → chrome */}
+      <div className="hero-orb hero-orb-solar z-0" aria-hidden />
+      <div className="hero-orb hero-orb-cyan z-0" aria-hidden />
+      <div className="hero-orb hero-orb-chloro z-0" aria-hidden />
+      <div className="hero-orb hero-orb-magenta z-0" aria-hidden />
 
-      <div className="hero-orb hero-orb-solar" aria-hidden />
-      <div className="hero-orb hero-orb-cyan" aria-hidden />
-      <div className="hero-orb hero-orb-chloro" aria-hidden />
-      <div className="hero-orb hero-orb-magenta" aria-hidden />
+      <HeroPlate />
+
+      <LivingGeometry className="z-[1]" />
 
       <div className="hero-scrim z-[1]" aria-hidden />
       <div className="hero-vignette z-[1]" aria-hidden />
